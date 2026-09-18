@@ -1,0 +1,63 @@
+def play_round(player_move: number):
+    global computer_move, outcome, ties, wins, losses
+    show_move(player_move)
+    basic.pause(700)
+    basic.show_string("VS")
+    computer_move = randint(0, 2)
+    show_move(computer_move)
+    basic.pause(700)
+    outcome = (player_move - computer_move + 3) % 3
+    if outcome == 0:
+        ties += 1
+        basic.show_icon(IconNames.ASLEEP)
+        music.play_tone(262, music.beat(BeatFraction.HALF))
+    elif outcome == 1:
+        wins += 1
+        basic.show_icon(IconNames.HAPPY)
+        music.play_tone(523, music.beat(BeatFraction.HALF))
+    else:
+        losses += 1
+        basic.show_icon(IconNames.SAD)
+        music.play_tone(131, music.beat(BeatFraction.HALF))
+    basic.pause(600)
+    basic.show_string("" + str(wins) + "-" + ("" + str(losses)) + "-" + ("" + str(ties)))
+
+def on_button_pressed_a():
+    play_round(0)
+input.on_button_pressed(Button.A, on_button_pressed_a)
+
+def on_button_pressed_ab():
+    play_round(2)
+input.on_button_pressed(Button.AB, on_button_pressed_ab)
+
+def on_button_pressed_b():
+    play_round(1)
+input.on_button_pressed(Button.B, on_button_pressed_b)
+
+def show_move(move: number):
+    if move == 0:
+        basic.show_leds("""
+            . # # # .
+            # # # # #
+            # # # # #
+            # # # # #
+            . # # # .
+            """)
+    elif move == 1:
+        basic.show_icon(IconNames.SQUARE)
+    else:
+        basic.show_icon(IconNames.SCISSORS)
+
+def on_logo_pressed():
+    global losses, wins, ties
+    losses = 0
+    wins = 0
+    ties = 0
+input.on_logo_event(TouchButtonEvent.PRESSED, on_logo_pressed)
+
+losses = 0
+wins = 0
+ties = 0
+outcome = 0
+computer_move = 0
+basic.show_string("RPS")
