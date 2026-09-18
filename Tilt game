@@ -1,0 +1,64 @@
+def new_target():
+    global target_x, target_y
+    target_x = randint(0, 4)
+    target_y = randint(0, 4)
+    if target_x == player_x and target_y == player_y:
+        target_x = (target_x + 2) % 5
+
+def on_button_pressed_a():
+    global score, player_x, player_y, playing, end_time
+    score = 0
+    player_x = 2
+    player_y = 2
+    playing = True
+    end_time = input.running_time() + 30000
+    new_target()
+    basic.show_string("GO")
+input.on_button_pressed(Button.A, on_button_pressed_a)
+
+blink = False
+pitch = 0
+roll = 0
+end_time = 0
+playing = False
+score = 0
+target_y = 0
+target_x = 0
+player_y = 0
+player_x = 0
+player_x = 2
+player_y = 2
+basic.show_string("A")
+
+def on_forever():
+    global playing, roll, pitch, player_x, player_y, score, blink
+    if not (playing):
+        return
+    if input.running_time() > end_time:
+        playing = False
+        music.play_tone(196, music.beat(BeatFraction.HALF))
+        basic.show_string("SCORE")
+        basic.show_number(score)
+        basic.show_string("A")
+        return
+    roll = input.rotation(Rotation.ROLL)
+    pitch = input.rotation(Rotation.PITCH)
+    if roll > 20 and player_x < 4:
+        player_x += 1
+    elif roll < -20 and player_x > 0:
+        player_x += 0 - 1
+    if pitch > 20 and player_y < 4:
+        player_y += 1
+    elif pitch < -20 and player_y > 0:
+        player_y += 0 - 1
+    if player_x == target_x and player_y == target_y:
+        score += 1
+        music.play_tone(880, music.beat(BeatFraction.SIXTEENTH))
+        new_target()
+    basic.clear_screen()
+    blink = not (blink)
+    if blink:
+        led.plot(target_x, target_y)
+    led.plot(player_x, player_y)
+    basic.pause(150)
+basic.forever(on_forever)
